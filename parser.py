@@ -3,12 +3,6 @@ import re
 import datetime
 
 
-class NewException(Exception):
-    def __init__(self, message):
-        super(NewException, self).__init__(message)
-        self.message = message
-
-
 class Line:
     info_messages = [
         "Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.",
@@ -27,7 +21,7 @@ class Line:
 
     @staticmethod
     def get_time(line):
-        date = line.split(" -")[0]  # 8/26/17, 5:13 PM
+        date = line.split(" -")[0]  # 8/26/17, 5:13 PM or 8/26/17, 17:13
         try:
             try:
                 return datetime.datetime.strptime(date, "%m/%d/%y, %I:%M %p")
@@ -74,18 +68,18 @@ class Line:
             return set(person_list)
         elif side == "right":
             control = 0
-            r = []
+            r = set()
             for key in keys:
                 try:
                     line.index(key)
                     persons = line.split(key)[-1].split(",")[:-1] + line.split(key)[-1].split(",")[-1].split(" and ")
                     if any(persons):
-                        persons = [p.strip() for p in persons]
-                        r += persons
+                        persons = set([p.strip() for p in persons])
+                        r.update(persons)
                 except ValueError:
                     control += 1
             if control == len(keys):
-                return []
+                return set()
             else:
                 return r
 
@@ -100,9 +94,6 @@ class Line:
         for i in Chat._all_operations.keys():
             if i == '!_*_!SendMessage!_*_!':
                 continue
-            # elif i == '!_*_!removed!_*_!':
-            #     line.split(":", 2)[1].split(i)
-            #     line.split("removed ")[-1].split(" and ")
             if len(self.text.split(":", 2)[1].split(i)) == 2:
                 return Chat._all_operations[i]
         else:
@@ -132,7 +123,6 @@ class Person:
         self.saved_contact_name = name
 
     def update_stats(self, operation, line):
-        # print(self.name,self.statistics,operation,line,sep="\n")
         self.statistics[operation] += 1
         if operation == "SendMessage":
             message = line.text.rsplit(": ", 1)[1]
@@ -265,16 +255,13 @@ class Chat:
             #         self.persons[person].existence[0][0] = self.persons[self.right_side_person].existence[0][0] - one_second
             #     if self.persons[person].existence[-1][1] is None:
             #         self.persons[person].existence[-1][1] = self.end_date + one_second
+        else:
+            for p in self.persons:
+                if p != self.right_side_person:
+                    self.title_history.append(p)
+                    break
 
     def __repr__(self):
-        # self.title_history = []
-        # self.text = self.read_file(file)
-        # self.persons = {}
-        # self.add_persons()
-        # self.start_date = self.text[0].time
-        # self.end_date = self.text[-1].time
-        # self.type = self.detect_chat_type(file)
-        # self.right_side_person = self.ask_right_side()
         return "Title: {}\nStart Date: {}\nEnd Date: {}\nType: {}\nR-side person: {}".format(
             self.title_history[-1],self.start_date,self.end_date,self.type,self.right_side_person)
 
