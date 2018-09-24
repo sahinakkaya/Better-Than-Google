@@ -1,7 +1,6 @@
 venv/
-babam
-itu
+chats/
 .idea/
-whatsapp_ui/
+whatsapp_ui/images/chats/
 __pycache__
 
