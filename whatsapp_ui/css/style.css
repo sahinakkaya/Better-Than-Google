@@ -1,0 +1,499 @@
+*:not(.container){
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+body{
+	background-image: url(../images/background.jpg);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+@font-face{
+	font-family: Helvetica Neue Light;
+	src: url(../fonts/HelveticaNeueLt.ttf);
+}
+
+@font-face{
+	font-family: Helvetica Neue;
+	src: url(../fonts/HelveticaNeue.ttf);
+}
+
+@font-face{
+	font-family: Helvetica Neue Medium;
+	src: url(../fonts/HelveticaNeueMed.ttf);
+}
+
+@font-face{
+	font-family: Helvetica Neue Bold;
+	src: url(../fonts/HelveticaNeueBd.ttf);
+}
+
+.container{
+	margin-left: 0px;
+	width: 506px;
+	height: 900px;
+	display: block;
+	box-sizing: border-box;
+	overflow: hidden;
+	border-top: solid 35px #054d44;
+	background-color: black;
+	/*margin: 50px auto;*/
+	position: relative;
+
+}
+
+.title_bar{
+	background-color: #075e54;
+	width: 100%;
+	height: 150px;
+}
+
+.title_top{
+	overflow: hidden;
+	width: 90%;
+	display: block;
+	margin: 0 auto;
+	height: 90px;
+}
+
+.tab_menu{
+	width: 100%;
+	overflow: hidden;
+	height: 60px;
+}
+
+.single_tab{
+	width: 33.333333333333333333%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	float: left;
+	font-family: 'Helvetica Neue Medium';
+	letter-spacing: 1.3px;
+	font-weight: 600;
+	font-size: 18px;
+	border-bottom: solid 3px transparent;
+	color: rgba(165, 165, 165, 0.8);
+}
+
+.single_tab:hover,
+.active{
+	color: white;
+	border-color: white;
+	cursor: pointer;
+}
+
+.title_container{
+	height: 100%;
+	width: 50%;
+	display: flex;
+	align-items: center;
+	float: left;
+}
+
+.title_container p {
+	font-family: 'Helvetica Neue Light';
+	color: white;
+	letter-spacing: 2px;
+	font-weight: 600;
+	font-size: 26px;
+}
+
+.icon_container{
+	width: 30%;
+	float: right;
+	height: 100%;
+}
+
+.icon_container div{
+	height: 100%;
+	display: flex;
+	width: 100px;
+	align-items: center;
+	justify-content: center;
+	float: right;
+}
+
+.icon_container div:nth-child(1){
+	width: 10px;
+}
+
+.icon_container img{
+	height: 30px;
+	cursor: pointer;
+}
+
+.messages_section{
+	width: 100%;
+	height: calc(100% - 80px);
+	box-sizing: border-box;
+	padding-bottom: 49px;
+	background-color: white;
+	overflow: auto;
+	background: white;
+	/*background: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")*/
+}
+
+.single_chat{
+	width: 100%;
+	height: 110px;
+	position: relative;
+	box-sizing: border-box;
+	padding: 10px 30px;
+}
+
+.single_chat:hover{
+	cursor: pointer;
+	background-color: rgba(165, 165, 165, 0.2);
+}
+
+.new_chat{
+	width: 100%;
+	height: 110px;
+	position: relative;
+	box-sizing: border-box;
+	padding: 10px 30px;
+}
+.new_chat:hover{
+	cursor: pointer;
+	background-color: rgba(165, 165, 165, 0.2);
+}
+.new_chat:after{
+	width: 74%;
+	height: 1px;
+	content: "";
+	background-color: rgba(165, 165, 165, 0.8);
+	left: 62%;
+	transform: translate(-50%, 0);
+	position: absolute;
+	bottom: 0;
+}
+
+.single_chat:after{
+	width: 74%;
+	height: 1px;
+	content: "";
+	background-color: rgba(165, 165, 165, 0.8);
+	left: 62%;
+	transform: translate(-50%, 0);
+	position: absolute;
+	bottom: 0;
+}
+
+.image_container{
+	height: 100%;
+	display: flex;
+	width: 80px;
+	align-items: center;
+	justify-content: center;
+	float: left;
+}
+
+.image_container img{
+	height: 90%;
+	border-radius: 999px;
+}
+
+.content_container{
+	width: calc(100% - 80px);
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+
+.content_container_inner{
+	height: auto;
+	float: left;
+	margin-left: 20px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.user_name{
+	font-family: 'Helvetica Neue Bold';
+	color: black;
+	font-size: 18px;
+	width: 100%;
+	display: block;
+	letter-spacing: 1.1px;
+}
+
+.chat_content{
+	width: 100%;
+	display: block;
+	font-family: 'Helvetica Neue Light';
+	font-size: 18px;
+	color: rgba(165, 165, 165, 0.8);
+}
+
+.chat_content span{
+	background-color: #00d260;
+	float: right;
+	border-radius: 999px;
+	padding: 2px;
+	box-sizing: border-box;
+	width: 24px;
+	overflow: hidden;
+	height: 24px;
+	text-align: center;
+	color: white;
+	font-family: 'Helvetica Neue Bold';
+	font-size: 15px;
+	vertical-align: -3px;
+	line-height: 19px;
+}
+
+.user_name span,
+.read{
+	color: #00d260;
+	font-family: 'Helvetica Neue Medium';
+	font-size: 12px;
+	float: right;
+}
+
+.read{
+	color: rgba(165, 165, 165, 0.8) !important;
+}
+
+.android_controls{
+	width: 100%;
+	height: 70px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background-color: black;
+}
+
+.controls_inner{
+	width: 70%;
+	height: 100%;
+	display: block;
+	margin: 0 auto;
+}
+
+.controls_inner div{
+	width: 33.3333333%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	float: left;
+}
+
+.controls_inner div img{
+	width: 25px;
+}
+
+.lightbox{
+	width: 506px;
+	height: 900px;
+	z-index: 99999999;
+	top: 50px;
+	opacity: 0;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	background-color: rgba(16, 16, 16, 0.6);
+	display: none;
+}
+
+.lightbox_container{
+	width: 340px;
+	height: 400px;
+	background-color: white;
+	position: relative;
+	display: none;
+}
+
+.lightbox_name{
+	width: 100%;
+	position: absolute;
+	top: 0;
+	box-sizing: border-box;
+	letter-spacing: 1.1px;
+	left: 0;
+	padding: 7px 7px;
+	font-family: 'Helvetica Neue Light';
+	font-size: 22px;
+	color: white;
+	background-color: rgba(16, 16, 16, 0.5);
+}
+
+.lightbox_image{
+	width: 100%;
+	height: 340px;
+}
+
+.lightbox_image img{
+	width: 100%;
+	height: 100%;
+}
+
+.lightbox_controls{
+	width: 100%;
+	height: 60px;
+	background-color: white;
+}
+
+.one_control{
+	width: 25%;
+	height: 100%;
+	float: left;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.one_control img{
+	width: 30px;
+}
+
+.one_control:hover{
+	cursor: pointer;
+	background-color: rgba(165, 165, 165, 0.2);
+}
+
+.search_bar{
+	width: 100%;
+	position: absolute;
+	height: 60px;
+	box-shadow: -1px -10px 13px 10px #101010;
+	border: none;
+	font-family: 'Helvetica Neue Light';
+	font-size: 24px;
+	color: #101010;
+	text-decoration: underline;
+	padding: 0px 10px 0px 70px;
+	background-image: url(../images/icons/back.png);
+	background-position: 22px 17px;
+	background-size: 30px 24px;
+	display: none;
+	opacity: 100;
+	background-repeat: no-repeat;
+}
+.chat_header{
+	width: 100%;
+	height: 88px;
+	background-color:#075E54;
+	box-shadow: -1px -10px 13px 10px #101010;
+	/*border: none;
+	font-family: 'Helvetica Neue Light';
+	font-size: 24px;
+	color: #101010;
+	background-color:#075E54;
+	text-decoration: underline;
+	padding: 0px 10px 0px 70px;
+	background-image: url(../images/icons/back.png);
+	background-position: 22px 17px;
+	background-size: 30px 24px;
+	display: block;
+	opacity: 100;
+	background-repeat: no-repeat;
+	width: 100%;
+	height: 39px;*/
+}
+.back_to_chats{
+	height:100%;
+	filter: brightness(0) invert(1);
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 25px;/*28px*/
+	height: 19px; /*19px*/
+	margin-left: 10px;
+	float: left;
+	margin-right: 8px;
+}
+
+.chat_icon{
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	float: left;
+	height: 65%;
+	border-radius: 999px;
+}
+.chat_title{
+	padding-left: 10px;
+	font-family: 'Helvetica Neue Bold';
+	color: white;
+	float: left;
+}
+.single .chat_title{
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 21px;
+	letter-spacing: 1.1px;
+}
+.group .chat_title{
+	margin-top: 17px;
+	font-size: 20px;
+	letter-spacing: 1.1px;
+}
+.group .chat_title .persons{
+	margin-top: 6px;
+	font-size: 16.1px;
+	letter-spacing: 1px;
+	font-weight: 100;
+	font-family: 'Helvetica Neue Bold'
+}
+.right_icons{
+	height:100%;
+	filter: brightness(0) invert(1);
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	height: 30%;
+	margin-left: 20px;
+	float: right;
+	margin-right: 15px;
+}
+textarea:focus, input:focus{
+    outline: none;
+}
+
+.back_trigger{
+	width: 34px;
+	height: 39px;
+	background-color: transparent;
+	position: absolute;
+	display: none;
+	left: 20px;
+	top: 10px;
+	cursor: pointer;
+	z-index: 999;
+}
+
+.dropdown_menu{
+	width: 0px;
+	height: 0px;
+	overflow: hidden;
+	background-color: white;
+	box-shadow: 0px 0px 4px rgba(165, 165, 165, 0.5);
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	z-index: 999;
+}
+
+.dropdown_item{
+	width: 100%;
+	font-family: 'Helvetica Neue Light';
+	box-sizing: border-box;
+	padding: 12px 20px;
+	background-color: white;
+}
