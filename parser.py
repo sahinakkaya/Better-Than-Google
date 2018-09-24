@@ -2,7 +2,6 @@ from random import choice
 import re
 import datetime
 
-
 class Line:
     info_messages = [
         "Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.",
@@ -89,7 +88,7 @@ class Line:
     def find_operation(self):
         if self.text.split("- ")[1] in self.info_messages:
             return -1
-        if len(self.text.split(":", 2)) == 3:
+        if len(self.text.split(":", 2)) == 3 and len(self.text.split(": ", 1)) == 2:
             return "SendMessage"  # Does matter! :)
         for i in Chat._all_operations.keys():
             if i == '!_*_!SendMessage!_*_!':
@@ -228,6 +227,8 @@ class Chat:
 
     def ask_right_side(self):
         r = input("Who are you? ")
+        # if r == "":
+        #     return "Şahin Akkaya"
         while not (r in self.persons and self.persons[r].existence == [[None, None]]):
             print("There is no such person in the person list or the person you entered is not you.")
             r = input("Try again: ")
