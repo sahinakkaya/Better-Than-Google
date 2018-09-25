@@ -5,9 +5,9 @@ import datetime
 
 class Line:
     info_messages = [
-        "Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.",
-        "Messages to this group are now secured with end-to-end encryption. Tap for more info.",
-        "ERROR: can't send to this group, not a participant"]
+        "Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.\n",
+        "Messages to this group are now secured with end-to-end encryption. Tap for more info.\n",
+        "ERROR: can't send to this group, not a participant\n"]
 
     def __init__(self, line):
         self.text = self.remove_unicode_spaces(line)
@@ -16,8 +16,6 @@ class Line:
             self.operation = self.find_operation()
             self.main_persons = self.slice_to_person(self.text)
             self.affected_persons = self.slice_to_person(self.text, "right", " added ", " removed ", " changed to ")
-        else:
-            pass
 
     @staticmethod
     def get_time(line):
@@ -33,7 +31,7 @@ class Line:
             raise Exception(e)
 
     def __add__(self, other):
-        return Line(self.text + "\n" + other.text)
+        return Line(self.text + other.text)
 
     def __str__(self):
         return self.text
@@ -51,7 +49,7 @@ class Line:
         for char in line:
             if char == '\xa0':
                 new_line += " "
-            elif char.isprintable():
+            elif char.isprintable() or char in "\t\n\r\f\v":
                 new_line += char
         return new_line
 
@@ -161,13 +159,13 @@ class Chat:
                        '!_*_!changed!_*_!to!_*_!': 'ChangeNumber2This'}
 
     def __init__(self, file):
+        self.type = self.detect_chat_type(file)
         self.title_history = []
         self.text = self.read_file(file)
         self.persons = {}
         self.add_persons()
         self.start_date = self.text[0].time
         self.end_date = self.text[-1].time
-        self.type = self.detect_chat_type(file)
         self.right_side_person = self.ask_right_side()
         self.adjust_right_side()
 
