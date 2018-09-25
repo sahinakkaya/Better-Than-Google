@@ -2,6 +2,7 @@ from random import choice
 import re
 import datetime
 
+
 class Line:
     info_messages = [
         "Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.",
@@ -107,8 +108,6 @@ class Person:
     def __init__(self, name):
         self.unique_id = name
         self.descriptive_name = None
-        if not re.match(r"^\+[\d\s()-]{14,17}$", self.unique_id):
-            print(self.unique_id)
         self.saved_contact_name = None if re.match(r"^\+[\d\s]{11,19}$", self.unique_id) else self.unique_id
         self.statistics = {i: 0 for i in Chat._all_operations.values()}
         self.color = choice(self.colors)
@@ -142,10 +141,10 @@ class Person:
 
     def __repr__(self):
         return "ID: {}\nDescriptive Name: {}\nSaved Name: {}\nColor: {}\nExistence: {}\n".format(self.unique_id,
-                                                                                self.descriptive_name,
-                                                                                self.saved_contact_name,
-                                                                                self.color,
-                                                                                self.existence)
+                                                                                                 self.descriptive_name,
+                                                                                                 self.saved_contact_name,
+                                                                                                 self.color,
+                                                                                                 self.existence)
 
 
 class Chat:
@@ -225,10 +224,15 @@ class Chat:
                 return key
 
     def ask_right_side(self):
+        possible_persons = [person.saved_contact_name for person in self.persons.values() if not (
+                re.match(r"^\+[\d\s()-]{14,17}$", person.unique_id) or
+                person.saved_contact_name in ('You', 'you')) and
+                person.existence == [[None, None]]]
+        print(*possible_persons, sep="\n")
         r = input("Who are you? ")
         # if r == "":
         #     return "Şahin Akkaya"
-        while not (r in self.persons and self.persons[r].existence == [[None, None]]):
+        while r not in possible_persons:
             print("There is no such person in the person list or the person you entered is not you.")
             r = input("Try again: ")
 
@@ -267,6 +271,4 @@ class Chat:
 
     def __repr__(self):
         return "Title: {}\nStart Date: {}\nEnd Date: {}\nType: {}\nR-side person: {}".format(
-            self.title_history[-1],self.start_date,self.end_date,self.type,self.right_side_person)
-
-
+            self.title_history[-1], self.start_date, self.end_date, self.type, self.right_side_person)
