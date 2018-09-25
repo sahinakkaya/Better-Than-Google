@@ -119,7 +119,7 @@ def main():
 
     for file in os.listdir("chats"):
         chat = Chat(f"chats/{file}")
-        chat_type = "single_chat" if chat.type == "2 Person Chat" else "single_chat"
+        chat_type = "single_chat" if chat.type == "2 Person Chat" else "new_chat"
         chat_image = f"{file}.jpg" if file + ".jpg" in images else "default.png"
         title = chat.title_history[-1]
         formatted_time = format_time(chat.end_date)
@@ -128,7 +128,8 @@ def main():
 
     all_chats.sort(key=lambda x: x[5], reverse=True)
 
-    chat_temp = """<div class="{}"> 
+    chat_temp = """
+                    <div class="{}"> 
                         <div class="image_container">
                             <img src="images/chats/{}">
                         </div>
