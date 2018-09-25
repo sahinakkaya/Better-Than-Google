@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-from c import Chat, Line, Person
+from parser import Chat, Line
 import io
 from datetime import datetime
 
@@ -9,7 +9,7 @@ class TestChat(unittest.TestCase):
     @mock.patch('builtins.input')
     def test_group_chat(self,fake_stdin, fake_stdout):
         fake_stdin.return_value = "Şahin Akkaya"
-        self.chat = Chat("itu")
+        self.chat = Chat("chats/itu")
         self.assertEqual(self.chat.title_history[-1],"ITU COMPUTER 17-18")
         self.assertEqual(self.chat.type,"Group Chat")
         self.assertEqual(self.chat.right_side_person,"Şahin Akkaya")
@@ -21,7 +21,7 @@ class TestChat(unittest.TestCase):
     @mock.patch('builtins.input')
     def test_single_chat(self, fake_stdin, fake_stdout):
         fake_stdin.return_value = "Babam"
-        self.chat = Chat("babam")
+        self.chat = Chat("chats/babam")
         self.assertEqual(self.chat.title_history[-1], "Şahin Akkaya")
         self.assertEqual(self.chat.type, "2 Person Chat")
         self.assertEqual(self.chat.right_side_person, "Babam")
@@ -36,6 +36,7 @@ class TestChat(unittest.TestCase):
         self.assertEqual(line.time, datetime(2017, 9, 16, 21, 6))
         self.assertSetEqual(line.affected_persons, set())
         self.assertSetEqual(line.main_persons, {"+90 534 317 04 77"})
+
 
     def test_send_message(self):
         line = Line("10/6/17, 6:11 PM - ‪+90 506 369 83 17‬: Merhaba")
@@ -52,6 +53,12 @@ class TestChat(unittest.TestCase):
         self.assertEqual(line.time, datetime(2018, 4, 10, 15, 54))
         self.assertSetEqual(line.affected_persons, {"+90 531 226 92 68","+90 544 534 33 90"})
         self.assertSetEqual(line.main_persons, {"+90 554 643 08 24"})
+
+        line = Line("4/10/18, 15:54 - Şahin Akkaya‬ added person name with colon : (Weird person)‬")
+        self.assertEqual(line.operation, "AddPerson")
+        self.assertSetEqual(line.main_persons, {"Şahin Akkaya"})
+        self.assertSetEqual(line.affected_persons, {"person name with colon : (Weird person)"})
+
 
     def test_remove(self):
         line = Line("10/26/17, 2:42 PM - ‪+90 534 317 04 77‬ removed ‪+90 546 402 31 26‬")
@@ -70,7 +77,7 @@ class TestChat(unittest.TestCase):
 
     def test_joined(self):
         line = Line("10/6/17, 6:06 PM - You joined using this group's invite link‬")
-        self.assertEqual(line.operation, "JoinGroup")
+        self.assertEqual(line.operation, "JoinedGroup")
         self.assertEqual(line.time, datetime(2017, 10, 6, 18, 6))
         self.assertSetEqual(line.affected_persons, set())
         self.assertSetEqual(line.main_persons, {"You"})

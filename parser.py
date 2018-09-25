@@ -88,15 +88,14 @@ class Line:
     def find_operation(self):
         if self.text.split("- ")[1] in self.info_messages:
             return -1
-        if len(self.text.split(":", 2)) == 3 and len(self.text.split(": ", 1)) == 2:
-            return "SendMessage"  # Does matter! :)
         for i in Chat._all_operations.keys():
-            if i == '!_*_!SendMessage!_*_!':
-                continue
             if len(self.text.split(":", 2)[1].split(i)) == 2:
                 return Chat._all_operations[i]
         else:
-            raise Exception("Unknown operation\n", self.text)
+            if len(self.text.split(":", 2)) == 3:
+                return "SendMessage"
+            else:
+                raise Exception("Unknown operation\n", self.text)
 
 
 class Person:
@@ -261,6 +260,10 @@ class Chat:
                 if p != self.right_side_person:
                     self.title_history.append(p)
                     break
+
+    @property
+    def title(self):
+        return self.title_history[-1]
 
     def __repr__(self):
         return "Title: {}\nStart Date: {}\nEnd Date: {}\nType: {}\nR-side person: {}".format(
