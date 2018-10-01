@@ -1,6 +1,6 @@
 from random import choice
-import re
 import datetime
+from patterns import regexes, split_pattern, is_number, is_valid_hex
 
 
 class Line:
@@ -85,15 +85,31 @@ class Line:
         return self.time is not None
 
     def find_operation(self):
+        text = split_pattern.split(self.text)[1]
+        if text in self.info_messages:
+            r = -1
+        for pattern in regexes.keys():
+            if pattern.match(text):
+                r = regexes[pattern]
+                break
+        else:
+            r = -2
         if self.text.split("- ")[1] in self.info_messages:
             return -1
         for i in Chat._all_operations.keys():
             if len(self.text.split(":", 2)[1].split(i)) == 2:
+                print(r)
+                print(Chat._all_operations[i])
+                if Chat._all_operations[i] =="SecurityCodeChanged":
+                    print(self.text)
+                assert r == Chat._all_operations[i]
                 return Chat._all_operations[i]
         else:
             if len(self.text.split(":", 2)) == 3:
+                assert r == "SendMessage"
                 return "SendMessage"
             else:
+                assert r == -2
                 raise Exception("Unknown operation\n", self.text)
 
 
@@ -106,7 +122,7 @@ class Person:
     def __init__(self, name):
         self.unique_id = name
         self.descriptive_name = None
-        self.saved_contact_name = None if re.match(r"^\+[\d\s]{11,19}$", self.unique_id) else self.unique_id
+        self.saved_contact_name = None if is_number(self.unique_id) else self.unique_id
         self.statistics = {i: 0 for i in Chat._all_operations.values()}
         self.color = choice(self.colors)
         self.existence = [[None, None]]
@@ -132,7 +148,7 @@ class Person:
                 self.existence[-1][0] = line.time
 
     def update_color(self, color):
-        if re.match(r"(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)", color, re.IGNORECASE):
+        if  is_valid_hex(color):
             self.color = color
         else:
             print("{} is not valid hex color.".format(color))
@@ -159,7 +175,6 @@ class Chat:
                        '!_*_!changed!_*_!to!_*_!': 'ChangeNumber2This'}
 
     def __init__(self, file):
-        self.type = self.detect_chat_type(file)
         self.title_history = []
         self.text = self.read_file(file)
         self.persons = {}
@@ -167,6 +182,7 @@ class Chat:
         self.start_date = self.text[0].time
         self.end_date = self.text[-1].time
         self.right_side_person = self.ask_right_side()
+        self.type = self.detect_chat_type(file)
         self.adjust_right_side()
 
     def detect_chat_type(self, file):
@@ -198,6 +214,8 @@ class Chat:
             affected_persons = line.affected_persons
             if operation != -1:
                 for person_name in main_persons:
+                    if person_name == "You":
+                        person_name = "you"
                     if person_name not in self.persons:
                         person = Person(person_name)
                         self.persons[person_name] = person
@@ -206,6 +224,8 @@ class Chat:
                 if operation in ("AddPerson", "RemovePerson", "ChangeNumber"):
                     operation = self.reverse_search_dict(self._all_operations, operation)
                     for person_name in affected_persons:
+                        if person_name == "You":
+                            person_name = "you"
                         if person_name not in self.persons:
                             person = Person(person_name)
                             self.persons[person_name] = person
@@ -223,13 +243,13 @@ class Chat:
 
     def ask_right_side(self):
         possible_persons = [person.saved_contact_name for person in self.persons.values() if not (
-                re.match(r"^\+[\d\s()-]{14,17}$", person.unique_id) or
+                is_number(person.unique_id) or
                 person.saved_contact_name in ('You', 'you')) and
-                person.existence == [[None, None]]]
+                            person.existence == [[None, None]]]
         print(*possible_persons, sep="\n")
-        r = input("Who are you? ")
+        # r = input("Who are you? ")
         # if r == "":
-        #     return "Şahin Akkaya"
+        return "Şahin Akkaya" if "Şahin Akkaya" in possible_persons else input("Who are you?")
         while r not in possible_persons:
             print("There is no such person in the person list or the person you entered is not you.")
             r = input("Try again: ")
@@ -249,9 +269,8 @@ class Chat:
     def adjust_right_side(self):
         if self.type == "Group Chat":
             self.persons[self.right_side_person].existence = []
-            for p in ['you', 'You']:
-                self.combine_stats(self.right_side_person, p)
-            one_second = datetime.timedelta(seconds=1)
+            self.combine_stats(self.right_side_person, "you")
+            # one_second = datetime.timedelta(seconds=1)
             # for person in self.persons:
             #     if self.persons[person].existence[0][0] is None:
             #         self.persons[person].existence[0][0] = self.persons[self.right_side_person].existence[0][0] - one_second
@@ -270,3 +289,11 @@ class Chat:
     def __repr__(self):
         return "Title: {}\nStart Date: {}\nEnd Date: {}\nType: {}\nR-side person: {}".format(
             self.title_history[-1], self.start_date, self.end_date, self.type, self.right_side_person)
+
+if __name__ == '__main__':
+    import os
+    for file in os.listdir("chats/"):
+        if not os.path.isdir("chats/{}".format(file)):
+            c =  Chat("chats/{}".format(file))
+
+
