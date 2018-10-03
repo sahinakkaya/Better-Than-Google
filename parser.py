@@ -1,6 +1,6 @@
 from random import choice
 import datetime
-from patterns import regexes, split_pattern, is_number, is_valid_hex
+from patterns import regexes, split_pattern, is_phone_number, valid_hex_color
 
 
 class Line:
@@ -39,14 +39,14 @@ class Line:
     def __repr__(self):
         template = "{}\n{}\n{}\n" \
                    "Main Persons: {}\nAffected Persons: {}".format(
-            self.text, datetime.datetime.strftime(self.time, "%d/%m/%Y, %-H:%M"), self.operation,
-            self.main_persons, self.affected_persons)
+                    self.text, datetime.datetime.strftime(self.time, "%d/%m/%Y, %-H:%M"), self.operation,
+                    self.main_persons, self.affected_persons)
         return template
 
     @staticmethod
     def remove_unicode_spaces(line):
         new_line = ""
-        for char in line:
+        for char in line:   
             if char == '\xa0':
                 new_line += " "
             elif char.isprintable() or char in "\t\n\r\f\v":
@@ -87,30 +87,12 @@ class Line:
     def find_operation(self):
         text = split_pattern.split(self.text)[1]
         if text in self.info_messages:
-            r = -1
+            return -1
         for pattern in regexes.keys():
             if pattern.match(text):
-                r = regexes[pattern]
-                break
+                return regexes[pattern]
         else:
-            r = -2
-        if self.text.split("- ")[1] in self.info_messages:
-            return -1
-        for i in Chat._all_operations.keys():
-            if len(self.text.split(":", 2)[1].split(i)) == 2:
-                print(r)
-                print(Chat._all_operations[i])
-                if Chat._all_operations[i] =="SecurityCodeChanged":
-                    print(self.text)
-                assert r == Chat._all_operations[i]
-                return Chat._all_operations[i]
-        else:
-            if len(self.text.split(":", 2)) == 3:
-                assert r == "SendMessage"
-                return "SendMessage"
-            else:
-                assert r == -2
-                raise Exception("Unknown operation\n", self.text)
+            raise Exception("Unknown operation\n", self.text)
 
 
 class Person:
@@ -122,7 +104,7 @@ class Person:
     def __init__(self, name):
         self.unique_id = name
         self.descriptive_name = None
-        self.saved_contact_name = None if is_number(self.unique_id) else self.unique_id
+        self.saved_contact_name = None if is_phone_number(self.unique_id) else self.unique_id
         self.statistics = {i: 0 for i in Chat._all_operations.values()}
         self.color = choice(self.colors)
         self.existence = [[None, None]]
@@ -148,7 +130,7 @@ class Person:
                 self.existence[-1][0] = line.time
 
     def update_color(self, color):
-        if  is_valid_hex(color):
+        if valid_hex_color(color):
             self.color = color
         else:
             print("{} is not valid hex color.".format(color))
@@ -243,7 +225,7 @@ class Chat:
 
     def ask_right_side(self):
         possible_persons = [person.saved_contact_name for person in self.persons.values() if not (
-                is_number(person.unique_id) or
+                is_phone_number(person.unique_id) or
                 person.saved_contact_name in ('You', 'you')) and
                             person.existence == [[None, None]]]
         print(*possible_persons, sep="\n")
@@ -290,10 +272,10 @@ class Chat:
         return "Title: {}\nStart Date: {}\nEnd Date: {}\nType: {}\nR-side person: {}".format(
             self.title_history[-1], self.start_date, self.end_date, self.type, self.right_side_person)
 
+
 if __name__ == '__main__':
     import os
+
     for file in os.listdir("chats/"):
         if not os.path.isdir("chats/{}".format(file)):
-            c =  Chat("chats/{}".format(file))
-
-
+            c = Chat("chats/{}".format(file))
