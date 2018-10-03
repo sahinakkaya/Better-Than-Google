@@ -1,7 +1,8 @@
 import regex as re
 
-is_valid_hex = lambda x: re.match(r"(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)",x,re.IGNORECASE)
-is_number = lambda x: re.match(r"^\+[\d\s]{11,19}$", x) # re.match(r"^\+[\d\s()-]{14,17}$"
+valid_hex_color = lambda x: re.match(r"(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)", x, re.IGNORECASE)
+is_phone_number = lambda x: re.match(r"^\+[\d\s]{11,19}$", x) # re.match(r"^\+[\d\s()-]{14,17}$"
+
 split_pattern = re.compile(r"^(?:\d{1,2})/(?:\d{1,2})/(?:\d{1,2}), (?:\d{1,2}):(?:\d{1,2})(?: PM| AM)? - ")
 p_added = re.compile(
     r"(.*)(?: added )(?<!.* (?:created group \"|removed |changed the subject from \").*)(?<!.*:.*)(.*)")
