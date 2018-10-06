@@ -43,8 +43,8 @@ class TestChat(unittest.TestCase):
         self.assertEqual(line.text, "10/6/17, 6:11 PM - +90 506 369 83 17: Merhaba")
         self.assertEqual(line.operation,"SendMessage")
         self.assertEqual(line.time,datetime(2017,10,6,18,11))
-        self.assertSetEqual(line.extract_persons(line.text, "right"), set())
-        self.assertSetEqual(line.extract_persons(line.text, ), {"+90 506 369 83 17"})
+        self.assertSetEqual(line.extract_persons("OTHER"), set())
+        self.assertSetEqual(line.extract_persons(), {"+90 506 369 83 17"})
 
     def test_add(self):
         line = Line("4/10/18, 15:54 - ‪+90 554 643 08 24‬ added ‪+90 531 226 92 68‬ and ‪+90 544 534 33 90‬‬")
