@@ -1,6 +1,6 @@
 from random import choice
 import datetime
-from patterns import regexes, split_pattern, is_phone_number, valid_hex_color
+from patterns import operations, split_pattern, is_phone_number, valid_hex_color
 
 
 class Line:
@@ -13,9 +13,10 @@ class Line:
         self.text = self.remove_unicode_spaces(line)
         self.time = self.get_time(self.text)
         if self.time is not None:
+            self.text_without_time = split_pattern.split(self.text)[1]
             self.operation = self.find_operation()
-            self.main_persons = self.slice_to_person(self.text)
-            self.affected_persons = self.slice_to_person(self.text, "right", " added ", " removed ", " changed to ")
+            self.main_persons = self.extract_persons()
+            self.affected_persons = self.extract_persons("OTHER")
 
     @staticmethod
     def get_time(line):
@@ -39,60 +40,56 @@ class Line:
     def __repr__(self):
         template = "{}\n{}\n{}\n" \
                    "Main Persons: {}\nAffected Persons: {}".format(
-                    self.text, datetime.datetime.strftime(self.time, "%d/%m/%Y, %-H:%M"), self.operation,
-                    self.main_persons, self.affected_persons)
+            self.text, datetime.datetime.strftime(self.time, "%d/%m/%Y, %-H:%M"), self.operation,
+            self.main_persons, self.affected_persons)
         return template
 
     @staticmethod
     def remove_unicode_spaces(line):
         new_line = ""
-        for char in line:   
+        for char in line:
             if char == '\xa0':
                 new_line += " "
             elif char.isprintable() or char in "\t\n\r\f\v":
                 new_line += char
         return new_line
 
-    def slice_to_person(self, line, side="left", *keys):
-        if line.split("- ")[1] in self.info_messages:
-            return []
-        if side == "left":
-            sliced_text = line.split(":")[1].split("- ")[1]
-            for i in Chat._all_operations.keys():
-                sliced_text = sliced_text.split(i)[0]
-            person_list = sliced_text.split(" and ")
-            person_list = person_list[0].split(",") + [person_list[-1]]
-            person_list = [i.strip() for i in person_list if i != ""]
-            return set(person_list)
-        elif side == "right":
-            control = 0
-            r = set()
-            for key in keys:
-                try:
-                    line.index(key)
-                    persons = line.split(key)[-1].split(",")[:-1] + line.split(key)[-1].split(",")[-1].split(" and ")
-                    if any(persons):
-                        persons = set([p.strip() for p in persons])
-                        r.update(persons)
-                except ValueError:
-                    control += 1
-            if control == len(keys):
-                return set()
-            else:
-                return r
+    def extract_persons(self, p_type="MAIN"):
+        if self.operation == -1:
+            return set()
+        regex = self.reverse_search_dict(operations, self.operation)
+        text = self.text_without_time
+        person_list = self.slice_to_person(text, regex, p_type)
+        return set(person_list)
 
     def isvalid(self):
         return self.time is not None
 
     def find_operation(self):
-        text = split_pattern.split(self.text)[1]
+        text = self.text_without_time
         if text in self.info_messages:
             return -1
-        for pattern in regexes.keys():
+        for pattern in operations.keys():
             if pattern.match(text):
-                return regexes[pattern]
+                return operations[pattern]
         else:
             raise Exception("Unknown operation\n", self.text)
+
+    @staticmethod
+    def reverse_search_dict(dictionary, search_string):
+        for key, value in dictionary.items():
+            if value == search_string:
+                return key
+
+    def slice_to_person(self, string, regex, p_type):
+        if p_type in regex.groupindex:
+            sliced_text = regex.match(string).group(p_type)
+            sliced_text = sliced_text.rsplit(" and ", 1)
+            sliced_text = sliced_text[0].split(", ") + [sliced_text[-1]]
+            sliced_text = filter(None, sliced_text)
+            return sliced_text
+        else:
+            return set()
 
 
 class Person:
@@ -100,12 +97,16 @@ class Person:
               '#2BB518', '#1BF1B5', '#870202', '#778702', '#008A10', '#008A87', '#004E8A',
               '#46008A', '#8A004A', '#FF7A7A', '#E05C12', '#7BD2A1', '#30A41D', '#5DB693',
               '#7ADAFF', '#7A98FF', '#C77AFF', '#FF7AE1']
+    __statistic_fields = ['AddPerson', 'RemovePerson', 'CreateGroup', 'LeftGroup', 'JoinedGroup', "ChangeGroupSettings",
+                          'ChangeGroupIcon', 'AlreadyAdded', 'ChangeSubject', 'ChangeDescription', 'ChangeNumber',
+                          'SendMessage', 'KickedOut', 'AddedBySomeone', 'SecurityCodeChanged', 'NumberOfWords',
+                          'NumberOfLetters', 'ChangeNumber2This']
 
     def __init__(self, name):
         self.unique_id = name
         self.descriptive_name = None
         self.saved_contact_name = None if is_phone_number(self.unique_id) else self.unique_id
-        self.statistics = {i: 0 for i in Chat._all_operations.values()}
+        self.statistics = {i: 0 for i in Person.__statistic_fields}
         self.color = choice(self.colors)
         self.existence = [[None, None]]
 
@@ -116,6 +117,8 @@ class Person:
         self.saved_contact_name = name
 
     def update_stats(self, operation, line):
+        # print(line)
+        # print(self.statistics)
         self.statistics[operation] += 1
         if operation == "SendMessage":
             message = line.text.rsplit(": ", 1)[1]
@@ -144,18 +147,6 @@ class Person:
 
 
 class Chat:
-    _all_operations = {' added ': 'AddPerson', ' removed ': 'RemovePerson', ' created': 'CreateGroup',
-                       ' left': 'LeftGroup', ' joined': 'JoinedGroup',
-                       "changed this group's settings": "ChangeGroupSettings",
-                       " changed this group's icon": 'ChangeGroupIcon', ' was added': 'AlreadyAdded',
-                       ' changed the subject': 'ChangeSubject', ' changed the group': 'ChangeDescription',
-                       ' changed to ': 'ChangeNumber', '!_*_!SendMessage!_*_!': 'SendMessage',
-                       '!_*_!removed!_*_!': 'KickedOut', '!_*_!added!_*_!': 'AddedBySomeone',
-                       "'s security code": 'SecurityCodeChanged',
-                       '!_*_!NumberOfWords!_*_!': 'NumberOfWords',
-                       '!_*_!NumberOfLetters!_*_!': 'NumberOfLetters',
-                       '!_*_!changed!_*_!to!_*_!': 'ChangeNumber2This'}
-
     def __init__(self, file):
         self.title_history = []
         self.text = self.read_file(file)
@@ -204,24 +195,18 @@ class Chat:
                     self.persons[person_name].update_stats(operation, line)
 
                 if operation in ("AddPerson", "RemovePerson", "ChangeNumber"):
-                    operation = self.reverse_search_dict(self._all_operations, operation)
                     for person_name in affected_persons:
                         if person_name == "You":
                             person_name = "you"
                         if person_name not in self.persons:
                             person = Person(person_name)
                             self.persons[person_name] = person
-                        passive_operation = self._all_operations[operation.replace(" ", "!_*_!")]
+                        passive_operation = {"AddPerson": "AddedBySomeone", "RemovePerson": "KickedOut",
+                                             "ChangeNumber": "ChangeNumber2This"}[operation]
                         self.persons[person_name].update_stats(passive_operation, line)
 
                 elif operation in ("CreateGroup", "ChangeSubject"):
                     self.title_history.append(line.text.rsplit('"', 2)[-2])
-
-    @staticmethod
-    def reverse_search_dict(dictionary, search_string):
-        for key, value in dictionary.items():
-            if value == search_string:
-                return key
 
     def ask_right_side(self):
         possible_persons = [person.saved_contact_name for person in self.persons.values() if not (
@@ -247,6 +232,7 @@ class Chat:
             del self.persons[other]
         except KeyError as e:
             print(e)
+            raise Exception("Take a look at this")
 
     def adjust_right_side(self):
         if self.type == "Group Chat":
