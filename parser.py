@@ -213,6 +213,8 @@ class Chat:
                 is_phone_number(person.unique_id) or
                 person.saved_contact_name in ('You', 'you')) and
                             person.existence == [[None, None]]]
+        if len(possible_persons) == 0: # This should be updated.
+            possible_persons = self.persons.keys()
         print(*possible_persons, sep="\n")
         # r = input("Who are you? ")
         # if r == "":
