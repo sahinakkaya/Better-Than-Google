@@ -104,6 +104,7 @@ class Person:
 
     def __init__(self, name):
         self.unique_id = name
+        self.id_without_spaces = "_".join(self.unique_id.split()).replace("+", "_")
         self.descriptive_name = None
         self.saved_contact_name = None if is_phone_number(self.unique_id) else self.unique_id
         self.statistics = {i: 0 for i in Person.__statistic_fields}
@@ -213,7 +214,7 @@ class Chat:
                 is_phone_number(person.unique_id) or
                 person.saved_contact_name in ('You', 'you')) and
                             person.existence == [[None, None]]]
-        if len(possible_persons) == 0: # This should be updated.
+        if len(possible_persons) == 0:  # This should be updated.
             possible_persons = self.persons.keys()
         print(*possible_persons, sep="\n")
         # r = input("Who are you? ")
@@ -259,6 +260,11 @@ class Chat:
     def __repr__(self):
         return "Title: {}\nStart Date: {}\nEnd Date: {}\nType: {}\nR-side person: {}".format(
             self.title_history[-1], self.start_date, self.end_date, self.type, self.right_side_person)
+
+    def search(self, p):
+        for line in self.text:
+            if p in line.main_persons and line.operation == "SendMessage":
+                print(line.text, end="")
 
 
 if __name__ == '__main__':
