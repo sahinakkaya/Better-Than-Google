@@ -14,10 +14,10 @@ html_template = """<!DOCTYPE html>
 </head>
 <body>
   <div class="container">
-    {chat_header}
+    {header}
     <div class="messages_section">
       <div class="speech-wrapper">
-        {chat_content}
+        {content}
       </div>
       <div class="android_controls">
         <div class="controls_inner">
@@ -32,25 +32,28 @@ html_template = """<!DOCTYPE html>
 </body>
 </html>
 """
-chat_header = """<div class="chat_header {}">
+chat_header = """<div class="chat_header {type_}">
       <img class="back_to_chats" src="images/icons/back.png"></img>
       <img class="chat_icon" src="images/chats/default.png"></img>
-      <div class="chat_title"> <!-- 24 chars at max -->
+      <div class="chat_title"> 
         <p>{title}</p>
-        {group_participants}
+        <p class="persons">{participants}</p>
         <!--<p class="persons">Person-1, Person-2, Person-3, Perso...</p>-->
       </div>
       <img class="right_icons" src="images/menu.png"></img>
     </div>"""
 color_template = '.%s{\n    color:%s;\n}\n'
-name_tag = '<p class="name {}" >{}</p>'
-name_alt_tag = '<p class="name {}">{}<span> ~{}</span></p>'
-message_bubble = """<div class="bubble {alt}">
+info_template = """<div class="info {}">
+    <p>{}</p>
+</div>"""
+# name_tag = '<p class="name {}" >{}</p>'
+name_tag = '<p class="name {non_space_id}">{id}<span>{desc}</span></p>'
+message_bubble = """<div class="bubble {side}">
           <div class="txt">
-            {}
-            <p class="message">{message_content}</p>
+            {name}
+            <p class="message {type_}">{content}</p>
           </div>
           <span class="timestamp">{time}</span>
-          <div class="bubble-arrow {alt}"></div>
+          <div class="bubble-arrow {side}"></div>
         </div>
         """

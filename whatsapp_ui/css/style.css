@@ -10,6 +10,14 @@
 	-ms-user-select: none;
 	user-select: none;
 }
+.timestamp {
+            float:right;
+            margin-right:10px;
+            margin-bottom:5px;
+            font-size:11px;
+            text-transform: uppercase;
+            color: #999;
+        }
 
 body{
 	background-image: url(../images/background.jpg);
@@ -143,7 +151,7 @@ body{
 	background-color: white;
 	overflow: auto;
 	background: white;
-	/*background: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")*/
+	background: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")
 }
 
 .single_chat{
@@ -432,7 +440,7 @@ body{
 	color: white;
 	float: left;
 }
-.single .chat_title{
+.dual .chat_title{
 	position: relative;
 	top: 50%;
 	transform: translateY(-50%);
@@ -496,4 +504,141 @@ textarea:focus, input:focus{
 	box-sizing: border-box;
 	padding: 12px 20px;
 	background-color: white;
+}
+
+.speech-wrapper .bubble {
+    max-width: 260px;
+    height: auto;
+    display: table;
+    background: #f5f5f5;
+    border-radius: 4px;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+    position: relative;
+    margin: 0 0 3px;
+    word-break: break-word;
+    margin-left: 20px;
+		margin-top: 10px;
+		margin-bottom: 3px;
+}
+
+.speech-wrapper .bubble.right {
+		margin-top: 10px;
+	  margin-bottom: 3px;
+		margin-left: auto;
+		margin-right: 15px;
+		background:#dcf8c6;
+}
+
+.speech-wrapper .bubble .txt {
+    padding: 8px 14px;
+
+}
+
+.speech-wrapper .bubble .txt .name {
+    font-weight: 600;
+    font-size: 12px;
+    margin: 0 0 4px;
+}
+
+.speech-wrapper .bubble .txt .name span {
+    font-weight: normal;
+    color: #b3b3b3;
+}
+.speech-wrapper .bubble .txt .message.special{
+	font-style: italic;
+	color:#acb0b2;
+}
+.speech-wrapper .bubble .txt .message {
+    font-size: 14px;
+    margin: 0;
+    color: #2b2b2b;
+    line-height: 1.8;
+    word-break: break-word;
+
+}
+
+
+.speech-wrapper .bubble .txt .timestamp {
+    font-size: 12x;
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    text-transform: uppercase;
+    color: #999;
+}
+.timestamp {
+    float:right;
+    margin-right:10px;
+    margin-bottom:5px;
+    font-size:11px;
+    text-transform: uppercase;
+    color: #999;
+}
+
+.speech-wrapper .bubble .bubble-arrow {
+    position: absolute;
+    width: 0;
+    bottom: 42px;
+    left: -16px;
+    height: 0;
+}
+
+.speech-wrapper .bubble .bubble-arrow.right {
+    right: -2px;
+    bottom: 40px;
+    left: auto;
+		border-top-color:#e2ffc7;
+    /*background: #f5f5f5;*/
+}
+
+.speech-wrapper .bubble .bubble-arrow.right:after {
+    content: "";
+    position: absolute;
+    border: 0 solid transparent;
+    border-top: 9px solid #dcf8c6;
+    border-radius: 0 20px 0;
+    width: 15px;
+    height: 30px;
+    transform: rotate(145deg);
+}
+
+.speech-wrapper .bubble .bubble-arrow:after {
+    content: "";
+    position: absolute;
+    border: 0 solid transparent;
+    border-top: 9px solid #f5f5f5;
+    border-radius: 0 20px 0;
+    width: 15px;
+    height: 30px;
+    transform: rotate(145deg);
+}
+
+.speech-wrapper .bubble .bubble-arrow.right:after {
+    transform: rotate(45deg) scaleY(-1);
+    /*background: #f5f5f5;*/
+}
+
+.date {
+    text-transform: uppercase;
+    background: #C9ECFF;
+}
+
+.wp_info {
+    background: #f6fca5;
+}
+
+.operation {
+    background: #C9ECFF;
+}
+
+.info {
+    color: #505050;
+    text-align: center;
+    display: table;
+    border-radius: 5px;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 10px;
+    margin: 5px auto;
+    max-width: 300px;
 }
