@@ -217,9 +217,7 @@ class Chat:
         if len(possible_persons) == 0:  # This should be updated.
             possible_persons = self.persons.keys()
         print(*possible_persons, sep="\n")
-        # r = input("Who are you? ")
-        # if r == "":
-        return "Şahin Akkaya" if "Şahin Akkaya" in possible_persons else input("Who are you?")
+        r = input("Who are you? ")
         while r not in possible_persons:
             print("There is no such person in the person list or the person you entered is not you.")
             r = input("Try again: ")
@@ -241,12 +239,6 @@ class Chat:
         if self.type == "Group Chat":
             self.persons[self.right_side_person].existence = []
             self.combine_stats(self.right_side_person, "you")
-            # one_second = datetime.timedelta(seconds=1)
-            # for person in self.persons:
-            #     if self.persons[person].existence[0][0] is None:
-            #         self.persons[person].existence[0][0] = self.persons[self.right_side_person].existence[0][0] - one_second
-            #     if self.persons[person].existence[-1][1] is None:
-            #         self.persons[person].existence[-1][1] = self.end_date + one_second
         else:
             for p in self.persons:
                 if p != self.right_side_person:
