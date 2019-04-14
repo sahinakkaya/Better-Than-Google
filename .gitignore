@@ -6,3 +6,4 @@ __pycache__
 whatsapp_ui/index.html
 operation_creator.py
 
+whatsapp_ui/*.html

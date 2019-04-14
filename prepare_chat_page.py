@@ -2,6 +2,7 @@ import datetime
 import textwrap
 from parser import Chat
 from chat_page_templates import html_template, info_template, color_template, chat_header, name_tag, message_bubble
+import os
 
 
 class ChatPage:
@@ -41,10 +42,11 @@ class ChatPage:
         current_date = datetime.date.fromtimestamp(chat.start_date.timestamp()) - datetime.timedelta(days=1)
         content = ""
         previous_person = None
-        for line in chat.text[:150]:
+        for line in chat.text:
             date, text, operation = line.time, line.text_without_time, line.operation
-            difference = datetime.date.fromtimestamp(date.timestamp()).day - current_date.day
-            if difference > 0:
+            date = datetime.date.fromtimestamp(date.timestamp())
+            difference = date - current_date
+            if difference.days != 0:
                 current_date = date
                 content += self.format_date(date)
             if operation == "SendMessage":
@@ -58,10 +60,6 @@ class ChatPage:
 
     def get_sorted_person_list(self):
         all_persons = list(self.chat.persons.values())
-        try:
-            all_persons.remove(self.chat.persons[self.chat.right_side_person])
-        except ValueError:
-            pass
         person_list = []
         for person in all_persons:
             if person.saved_contact_name:
@@ -73,7 +71,7 @@ class ChatPage:
 
     def format_date(self, date):
         r = ""
-        diff = (self.today - datetime.date.fromtimestamp(date.timestamp())).days
+        diff = (self.today - date).days
         if diff == 0:
             r += info_template.format("date", "today")
         elif diff == 1:
@@ -86,7 +84,7 @@ class ChatPage:
     def send_message(self, line, previous_person):
         chat = self.chat
         person = chat.persons[list(line.main_persons)[0]]
-        content = line.text.split(": ", 1)[1][:-1]
+        content = line.text.split(": ", 1)[1][:-1].replace("<", " &lt;").replace(">", "&gt;")
         time = line.time.strftime("%-H:%M")
         side = "left"
         name = name_tag.format(non_space_id=person.id_without_spaces, id=person.unique_id, desc="")
@@ -98,11 +96,11 @@ class ChatPage:
         if self.chat.right_side_person == person.unique_id:
             side = "right"
             name = ""
-        if content in ("This message was deleted", "You deleted this message", "<Media omitted>"):
+        if content in ("This message was deleted", "You deleted this message", " &lt;Media omitted&gt;"):
             type_ = "special"
-            content = content.replace("<", " &lt;").replace(">", "&gt;")
             content = '<img src="images/special_message.png" width="10" height="10"> ' + content
-        return message_bubble.format(side=side, name=name, content=content, time=time, type_=type_), previous_person
+        return message_bubble.format(side=side, name=name, content=content.strip().replace("\n", " <br> "), time=time,
+                                     type_=type_), previous_person
 
     def get_page(self):
         return html_template.format(participant_colors=self.participant_colors, title=self.title, header=self.header,
@@ -113,5 +111,9 @@ class ChatPage:
             with open(file_name + ".html", "w") as f:
                 f.write(self.get_page())
         else:
-            with open("whatsapp_ui/" + self.filename + ".html", "w") as f:
+            with open("whatsapp_ui/" + os.path.basename(self.filename) + ".html", "w") as f:
                 f.write(self.get_page())
+
+
+if __name__ == '__main__':
+    ChatPage("chats/e")

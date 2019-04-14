@@ -38,11 +38,11 @@ class Line:
         return self.text
 
     def __repr__(self):
-        template = "{}\n{}\n{}\n" \
-                   "Main Persons: {}\nAffected Persons: {}".format(
-            self.text, datetime.datetime.strftime(self.time, "%d/%m/%Y, %-H:%M"), self.operation,
-            self.main_persons, self.affected_persons)
-        return template
+        return f'{self.text}\n' \
+            f'{datetime.datetime.strftime(self.time, "%d/%m/%Y, %-H:%M")}\n' \
+            f'{self.operation}\n' \
+            f'Main Persons: {self.main_persons}\n' \
+            f'Affected Persons: {self.affected_persons}'
 
     @staticmethod
     def remove_unicode_spaces(line):
@@ -50,7 +50,7 @@ class Line:
         for char in line:
             if char == '\xa0':
                 new_line += " "
-            elif char.isprintable() or char in "\t\n\r\f\v":
+            elif char.isprintable() or char in "\t\n\r\f\v\u200d\u200e\u200c":
                 new_line += char
         return new_line
 
@@ -81,7 +81,8 @@ class Line:
             if value == search_string:
                 return key
 
-    def slice_to_person(self, string, regex, p_type):
+    @staticmethod
+    def slice_to_person(string, regex, p_type):
         if p_type in regex.groupindex:
             sliced_text = regex.match(string).group(p_type)
             sliced_text = sliced_text.rsplit(" and ", 1)
@@ -137,30 +138,30 @@ class Person:
         if valid_hex_color(color):
             self.color = color
         else:
-            print("{} is not valid hex color.".format(color))
+            print(f"{color} is not valid hex color.")
 
     def __repr__(self):
-        return "ID: {}\nDescriptive Name: {}\nSaved Name: {}\nColor: {}\nExistence: {}\n".format(self.unique_id,
-                                                                                                 self.descriptive_name,
-                                                                                                 self.saved_contact_name,
-                                                                                                 self.color,
-                                                                                                 self.existence)
+        return f"ID: {self.unique_id}\n" \
+            f"Descriptive Name: {self.descriptive_name}\n" \
+            f"Saved Name: {self.saved_contact_name}\n" \
+            f"Color: {self.color}\n" \
+            f"Existence: {self.existence}\n"
 
 
 class Chat:
-    def __init__(self, file):
+    def __init__(self, filename):
         self.title_history = []
-        self.text = self.read_file(file)
+        self.text = self.read_file(filename)
         self.persons = {}
         self.add_persons()
         self.start_date = self.text[0].time
         self.end_date = self.text[-1].time
         self.right_side_person = self.ask_right_side()
-        self.type = self.detect_chat_type(file)
+        self.type = self.detect_chat_type(filename)
         self.adjust_right_side()
 
-    def detect_chat_type(self, file):
-        with open(file, encoding="utf8") as f:
+    def detect_chat_type(self, filename):
+        with open(filename, encoding="utf8") as f:
             first_line = f.readline()
             if Line.info_messages[0] in first_line and len(self.persons) <= 2:
                 return "2 Person Chat"
@@ -170,9 +171,9 @@ class Chat:
                 raise Exception("Unsupported file.")
 
     @staticmethod
-    def read_file(file):
+    def read_file(filename):
         text = []
-        with open(file, encoding="utf8") as f:
+        with open(filename, encoding="utf8") as f:
             for line in f.readlines():
                 line = Line(line)
                 if line.isvalid():
@@ -250,8 +251,11 @@ class Chat:
         return self.title_history[-1]
 
     def __repr__(self):
-        return "Title: {}\nStart Date: {}\nEnd Date: {}\nType: {}\nR-side person: {}".format(
-            self.title_history[-1], self.start_date, self.end_date, self.type, self.right_side_person)
+        return f"Title: {self.title_history[-1]}\n" \
+            f"Start Date: {self.start_date}\n" \
+            f"End Date: {self.end_date}\n" \
+            f"Type: {self.type}\n" \
+            f"R-side person: {self.right_side_person}"
 
     def search(self, p):
         for line in self.text:
@@ -263,5 +267,5 @@ if __name__ == '__main__':
     import os
 
     for file in os.listdir("chats/"):
-        if not os.path.isdir("chats/{}".format(file)):
-            c = Chat("chats/{}".format(file))
+        if not os.path.isdir(f"chats/{file}"):
+            c = Chat(f"chats/{file}")

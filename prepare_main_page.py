@@ -113,13 +113,18 @@ def format_message(chat):
             r += i.text.split(": ", 1)[1]
             break
     return textwrap.shorten(r, 45, placeholder="...")
+
+
 def main():
     all_chats = []
     images = os.listdir("whatsapp_ui/images/chats")
 
     for file in os.listdir("chats"):
         if os.path.isfile("chats/{}".format(file)):
-            chat = Chat("chats/{}".format(file))
+            try:
+                chat = Chat("chats/{}".format(file))
+            except:
+                continue
             chat_type = "single_chat" if chat.type == "2 Person Chat" else "new_chat"
             chat_image = "{}.jpg".format(file) if file + ".jpg" in images else "default.png"
             title = chat.title_history[-1]
@@ -151,7 +156,5 @@ def main():
     f.close()
 
 
-
 if __name__ == '__main__':
     main()
-
