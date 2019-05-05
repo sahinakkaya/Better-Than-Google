@@ -1,6 +1,6 @@
 from random import choice
 import datetime
-from patterns import operations, split_pattern, is_phone_number, valid_hex_color
+from patterns import OPERATIONS, SPLIT_PATTERN, is_phone_number, valid_hex_color
 
 
 class Line:
@@ -13,7 +13,7 @@ class Line:
         self.text = self.remove_unicode_spaces(line)
         self.time = self.get_time(self.text)
         if self.time is not None:
-            self.text_without_time = split_pattern.split(self.text)[1]
+            self.text_without_time = SPLIT_PATTERN.split(self.text)[1]
             self.operation = self.find_operation()
             self.main_persons = self.extract_persons()
             self.affected_persons = self.extract_persons("OTHER")
@@ -57,7 +57,7 @@ class Line:
     def extract_persons(self, p_type="MAIN"):
         if self.operation == -1:
             return set()
-        regex = self.reverse_search_dict(operations, self.operation)
+        regex = self.reverse_search_dict(OPERATIONS, self.operation)
         text = self.text_without_time
         person_list = self.slice_to_person(text, regex, p_type)
         return set(person_list)
@@ -69,9 +69,9 @@ class Line:
         text = self.text_without_time
         if text in self.info_messages:
             return -1
-        for pattern in operations.keys():
+        for pattern in OPERATIONS.keys():
             if pattern.match(text):
-                return operations[pattern]
+                return OPERATIONS[pattern]
         else:
             raise Exception("Unknown operation\n", self.text)
 
